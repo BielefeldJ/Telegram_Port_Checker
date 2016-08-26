@@ -47,6 +47,8 @@ Temporary Items
 .apdisk
 
 # Some IDE files..
-manifest.mf
-./build
-./dist
+/Telegram_Port_Checker/manifest.mf
+/Telegram_Port_Checker/nbproject/private/
+/Telegram_Port_Checker/build/
+/Telegram_Port_Checker/dist/
+/Telegram_Port_Checker/nbproject/
