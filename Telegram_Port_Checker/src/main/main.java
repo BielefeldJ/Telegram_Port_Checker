@@ -1,47 +1,49 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-/**
- *
- * @author jensb
- */
 public class main
 {
+
     public static void main(String[] args)
     {
-        List<Service> services = new LinkedList<Service>();
-        
+        boolean exit = false;
+        Scanner sc = null;
+        Checker ch = new Checker();
+
         String[] test = new String[2];
-        test[0] = "localhost:9999";
-        test[1] = "example:992w3";
-        for(String s : test)
+        test[0] = "ts3.bielefeld-server.de:9399";
+        test[1] = "ts3.bielefeld-server.de:30033";
+
+        ch.getServices(test);
+        ch.printServices();
+        Thread testt = new Thread(ch.task);
+        testt.start();
+        while (!exit)
         {
-            try
+            System.out.println("Running.. type q to quit!");
+            sc = new Scanner(System.in);
+            if ("q".equals(sc.next()))
             {
-                services.add(new Service(s.substring(0, s.indexOf(":")),Integer.parseInt(s.substring(s.indexOf(":")+1, s.length()))));
-            }
-            catch(NumberFormatException e)
-            {
-                System.out.println("Error: incorrect port in " + s);
-                System.exit(1);
+                exit = true;
             }
         }
+        sc.close();       
+                
+        try
+        {
+            testt.interrupt();
+            testt.join();
+        }
+        catch (InterruptedException ex)
+        {
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+
+  
     }
-    
-    private static boolean available(int port) {
-    try (Socket ignored = new Socket("localhost", port)) {
-        return false;
-    } catch (IOException ignored) {
-        return true;
-    }
-}
+
 }

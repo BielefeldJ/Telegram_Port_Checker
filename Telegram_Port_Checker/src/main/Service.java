@@ -1,23 +1,40 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package main;
 
-/**
- *
- * @author jensb
- */
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
 class Service
 {
-    private int port;
-    private String ip;
-    
+
+    private final int port;
+    private final String ip;
+
     public Service(String ip, int port)
     {
         this.ip = ip;
         this.port = port;
     }
-    
+
+    @Override
+    public String toString()
+    {
+       return "Checking port "+ port + " at " + ip; 
+    }
+
+    public boolean portIsOpen()
+    {
+        try
+        {
+            try (Socket socket = new Socket())
+            {
+                socket.connect(new InetSocketAddress(ip, port), 600);
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
 }
