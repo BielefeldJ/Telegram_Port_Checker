@@ -4,7 +4,7 @@ package main;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-class Service
+public class Service
 {
 
     private final int port;

@@ -1,5 +1,6 @@
 package main;
 
+import main.check.Checker;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,8 +20,7 @@ public class main
 
         ch.getServices(test);
         ch.printServices();
-        Thread testt = new Thread(ch.task);
-        testt.start();
+        ch.startCheck();
         while (!exit)
         {
             System.out.println("Running.. type q to quit!");
@@ -30,18 +30,16 @@ public class main
                 exit = true;
             }
         }
-        sc.close();       
-                
+        sc.close();   
         try
         {
-            testt.interrupt();
-            testt.join();
+            ch.stopCheck();
         }
         catch (InterruptedException ex)
         {
-            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error join @ main.class");
         }
-        
+
 
   
     }

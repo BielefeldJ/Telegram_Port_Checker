@@ -1,7 +1,10 @@
-package main;
+package main.check;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import main.Service;
 
 /**
  *
@@ -11,22 +14,22 @@ public class Checker
 {
 
     private List<Service> services = new LinkedList<Service>();
+    Thread checking;
 
-    Runnable task = () -> 
-            {
+    public void startCheck()
+    {
+        checking = new Thread(new Check_services(services));
+        checking.start();
+    }
 
-                    services.stream().forEach((s)
-                            -> 
-                            {
-                                if (!s.portIsOpen())
-                                {
-                                    // fire notify
-                                }
-                    });
-
-                
-
-    };
+    public void stopCheck() throws InterruptedException
+    {
+        if (!checking.isInterrupted())
+        {
+            checking.interrupt();
+            checking.join();
+        }
+    }
 
     public void getServices(String[] data)
     {
