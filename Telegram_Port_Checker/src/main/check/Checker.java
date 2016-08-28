@@ -40,7 +40,7 @@ public class Checker
             catch (NumberFormatException e)
             {
                 System.out.println("Error: incorrect port in " + s);
-                System.exit(1);
+                System.exit(1);  // exit if port isnt a number
             }
         }
     }
