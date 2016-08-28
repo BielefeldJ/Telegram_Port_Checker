@@ -5,10 +5,7 @@
  */
 package main.check;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import main.Service;
 
 /**
@@ -41,11 +38,13 @@ public class Check_services implements Runnable
             }
             try
             {
+                System.out.println("Waiting..");
                 Thread.sleep(10000);
             }
             catch (InterruptedException ex)
             {
                 System.out.println("Thread closed....");
+                Thread.currentThread().interrupt();
             }
         }
     }

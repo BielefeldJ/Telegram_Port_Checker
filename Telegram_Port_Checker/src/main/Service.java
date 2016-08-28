@@ -9,6 +9,7 @@ public class Service
 
     private final int port;
     private final String ip;
+    private boolean message_sended=false;
 
     public Service(String ip, int port)
     {

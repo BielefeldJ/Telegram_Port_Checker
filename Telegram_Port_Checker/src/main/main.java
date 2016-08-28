@@ -2,8 +2,6 @@ package main;
 
 import main.check.Checker;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class main
 {

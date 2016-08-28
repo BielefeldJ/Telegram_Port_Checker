@@ -2,8 +2,6 @@ package main.check;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import main.Service;
 
 /**
@@ -13,7 +11,7 @@ import main.Service;
 public class Checker
 {
 
-    private List<Service> services = new LinkedList<Service>();
+    private final List<Service> services = new LinkedList<>();
     Thread checking;
 
     public void startCheck()
