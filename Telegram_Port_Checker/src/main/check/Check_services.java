@@ -1,12 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main.check;
 
 import java.util.List;
 import main.Service;
+import org.telegram.telegrambots.TelegramApiException;
+import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.logging.BotLogger;
+import telegram.Bot;
 
 /**
  *
@@ -17,6 +16,7 @@ public class Check_services implements Runnable
 
     List<Service> services;
     boolean running = true;
+    TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
 
     public Check_services(List services)
     {
@@ -26,6 +26,14 @@ public class Check_services implements Runnable
     @Override
     public void run()
     {
+        try
+        {
+            telegramBotsApi.registerBot(new Bot());
+        }
+        catch (TelegramApiException e)
+        {
+            BotLogger.error("Error register", e);
+        }
 
         while (!Thread.currentThread().isInterrupted())
         {
@@ -33,7 +41,7 @@ public class Check_services implements Runnable
             {
                 if (!s.portIsOpen())
                 {
-                    // fire Telegram Message
+                    
                 }
             }
             try

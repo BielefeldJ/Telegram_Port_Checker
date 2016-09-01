@@ -28,7 +28,8 @@ public class main
                 exit = true;
             }
         }
-        sc.close();   
+        
+        sc.close();
         try
         {
             ch.stopCheck();
@@ -38,8 +39,6 @@ public class main
             System.out.println("Error join @ main.class");
         }
 
-
-  
     }
 
 }

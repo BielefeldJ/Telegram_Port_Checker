@@ -20,7 +20,7 @@ public class Service
     @Override
     public String toString()
     {
-       return "Checking port "+ port + " at " + ip; 
+       return port + ":" + ip; 
     }
 
     public boolean portIsOpen()
