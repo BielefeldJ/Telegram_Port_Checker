@@ -11,6 +11,11 @@ public class Service
     private final String ip;
     private boolean message_sended=false;
 
+    public boolean isMessage_sended()
+    {
+        return message_sended;
+    }
+
     public Service(String ip, int port)
     {
         this.ip = ip;
@@ -20,7 +25,7 @@ public class Service
     @Override
     public String toString()
     {
-       return port + ":" + ip; 
+       return ip + ":" + port; 
     }
 
     public boolean portIsOpen()
@@ -36,6 +41,18 @@ public class Service
         catch (Exception ex)
         {
             return false;
+        }
+    }
+    
+    public void toggleMessageSended()
+    {
+        if(message_sended == true)
+        {
+            message_sended = false;
+        }
+        else
+        {
+            message_sended=true;
         }
     }
 }

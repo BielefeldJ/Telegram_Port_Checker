@@ -2,7 +2,10 @@ package telegram;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import main.Service;
+import main.check.Checker;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
@@ -11,8 +14,9 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
 public class Bot extends TelegramLongPollingBot
 {
+
     private final List chatids = new ArrayList();
-    
+
     @Override
     public String getBotToken()
     {
@@ -25,43 +29,58 @@ public class Bot extends TelegramLongPollingBot
         if (update.hasMessage())
         {
             Message message = update.getMessage();
-            //check if the message has text. it could also contain for example a location ( message.hasLocation() )
             if (message.hasText())
             {
-                //create an object that contains the information to send back the message
-                SendMessage sendMessageRequest = new SendMessage();
-                sendMessageRequest.setChatId(message.getChatId().toString()); //who should get from the message the sender that sent it.
-                chatids.add(message.getChatId());
-                sendMessageRequest.setText("Okay. Starting..");
-                try
+                if ("/start".equals(message.getText()))
                 {
-                    sendMessage(sendMessageRequest); //at the end, so some magic and send the message ;)
+                    chatids.add(message.getChatId());
                 }
-                catch (TelegramApiException e)
+                if (message.getText().equals("/add"))
                 {
-                    //do some error handling
+                    try
+                    {
+                        Checker.getServices(message.getText().substring(message.getText().indexOf("add" + 1)));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        SendMessage err = new SendMessage();
+                        err.setChatId(message.getChatId().toString());
+                        err.setText("Wrong Port.... try again");
+                        try
+                        {
+                            sendMessage(err);
+                        }
+                        catch (TelegramApiException ex)
+                        {
+                            Logger.getLogger(Bot.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                 }
             }
         }
     }
-    
+
     public void fireOfflineMessage(Service s)
     {
         SendMessage message = new SendMessage();
-        message.setText("Service " + s.toString() + "is down!");
-        for(Object id : chatids)
-        {
-            message.setChatId(id.toString());
-            try
-            {
-                sendMessage(message);
-            }
-            catch (TelegramApiException ex)
-            {
-                System.out.println("Error sending offline message!");
-            }
-        }
-        
+        message.setText("Service " + s.toString() + " is down!");
+        chatids.stream().map((id)
+                -> 
+                {
+                    message.setChatId(id.toString());
+                    return id;
+        }).forEach((_item)
+                -> 
+                {
+                    try
+                    {
+                        sendMessage(message);
+                    }
+                    catch (TelegramApiException ex)
+                    {
+                        System.out.println("Error sending offline message!");
+                    }
+        });
     }
 
     @Override

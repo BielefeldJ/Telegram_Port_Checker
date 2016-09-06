@@ -14,9 +14,9 @@ import telegram.Bot;
 public class Check_services implements Runnable
 {
 
-    List<Service> services;
-    boolean running = true;
-    TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+    private final List<Service> services;
+    private final TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+    private final Bot bot =new Bot();
 
     public Check_services(List services)
     {
@@ -28,7 +28,7 @@ public class Check_services implements Runnable
     {
         try
         {
-            telegramBotsApi.registerBot(new Bot());
+            telegramBotsApi.registerBot(bot);
         }
         catch (TelegramApiException e)
         {
@@ -37,13 +37,24 @@ public class Check_services implements Runnable
 
         while (!Thread.currentThread().isInterrupted())
         {
-            for (Service s : services)
+            services.stream().forEach((s) ->
             {
                 if (!s.portIsOpen())
                 {
-                    
+                    if(!s.isMessage_sended())
+                    {
+                        bot.fireOfflineMessage(s);
+                        s.toggleMessageSended();
+                    }                    
                 }
-            }
+                else
+                {
+                    if(s.isMessage_sended())
+                    {
+                        s.toggleMessageSended();
+                    }
+                }
+            });
             try
             {
                 System.out.println("Waiting..");
@@ -51,7 +62,7 @@ public class Check_services implements Runnable
             }
             catch (InterruptedException ex)
             {
-                System.out.println("Thread closed....");
+                System.out.println("Thread closed....");                
                 Thread.currentThread().interrupt();
             }
         }

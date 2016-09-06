@@ -52,3 +52,4 @@ Temporary Items
 /Telegram_Port_Checker/build/
 /Telegram_Port_Checker/dist/
 /Telegram_Port_Checker/nbproject/
+Telegram_Port_Checker/src/telegram/BotConfig.java
