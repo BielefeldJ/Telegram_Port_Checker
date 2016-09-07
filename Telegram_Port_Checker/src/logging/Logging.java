@@ -5,10 +5,10 @@
  */
 package logging;
 
-import java.io.DataOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,8 +19,8 @@ import java.time.format.DateTimeFormatter;
  */
 public class Logging
 {
-    private static FileOutputStream fos;
-    private static DataOutputStream dos;
+    private static FileWriter fw;
+    private static BufferedWriter bf;
     private static File f = null;
     
     public Logging()
@@ -28,10 +28,10 @@ public class Logging
         f = new File(date() + "_TPChecker.log");
         try
         {
-            fos = new FileOutputStream(f);
-            dos = new DataOutputStream(fos);
-            dos.writeChars("Telegram_Port_Checker started....");
-            dos.flush();
+            fw = new FileWriter(f);
+            bf = new BufferedWriter(fw);
+            bf.write("Telegram_Port_Checker started.... \n");
+            bf.flush();
         }
         catch (FileNotFoundException ex)
         {
@@ -48,8 +48,8 @@ public class Logging
     {
         try
         {
-            dos.writeChars(message);
-            dos.flush();
+            bf.write(message + "\n");
+            bf.flush();
         }
         catch (IOException ex)
         {

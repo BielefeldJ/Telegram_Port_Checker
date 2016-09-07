@@ -60,7 +60,7 @@ public class Bot extends TelegramLongPollingBot
                             Logging.log("New Service added by " + message.getChatId().toString() + (msg.indexOf(" ") + 1));
                             SendMessage add = new SendMessage();
                             add.setChatId(message.getChatId().toString());
-                            add.setText("Add new service "+ (msg.indexOf(" ") + 1));
+                            add.setText("Add new service "+ msg.substring(msg.indexOf(" ") + 1));
                             sendTelegramMessage(add);
                         }
                         catch (NumberFormatException e)
