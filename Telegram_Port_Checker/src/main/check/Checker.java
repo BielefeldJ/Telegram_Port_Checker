@@ -29,7 +29,7 @@ public class Checker
         }
     }
 
-    public static void getServices(String[] data) throws NumberFormatException
+    public static void addServices(String[] data) throws NumberFormatException
     {
         for (String s : data)
         {
@@ -37,7 +37,7 @@ public class Checker
         }
     }
 
-    public static void getServices(String s) throws NumberFormatException
+    public static void addServices(String s) throws NumberFormatException
     {
         services.add(new Service(s.substring(0, s.indexOf(":")), getPortFromString(s)));
 

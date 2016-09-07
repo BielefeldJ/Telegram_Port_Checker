@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import logging.Logging;
+import main.Client;
 import main.Service;
 import main.check.Checker;
 import org.telegram.telegrambots.TelegramApiException;
@@ -16,7 +17,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 public class Bot extends TelegramLongPollingBot
 {
 
-    private final List chatids = new ArrayList();
+    private final List<Client> clients = new ArrayList<Client>();
     private String command;
 
     @Override
@@ -45,7 +46,7 @@ public class Bot extends TelegramLongPollingBot
                 switch (command)
                 {
                     case "/start":
-                        chatids.add(message.getChatId());
+                        clients.add(new Client(message.getChatId().toString()));
                         SendMessage newclient = new SendMessage();
                         newclient.setChatId(message.getChatId().toString());
                         newclient.setText("You will now receive offline messages!");
@@ -56,7 +57,7 @@ public class Bot extends TelegramLongPollingBot
                     case "/add":
                         try
                         {
-                            Checker.getServices(msg.substring(msg.indexOf(" ") + 1));
+                            Checker.addServices(msg.substring(msg.indexOf(" ") + 1));
                             Logging.log("New Service added by " + message.getChatId().toString() + (msg.indexOf(" ") + 1));
                             SendMessage add = new SendMessage();
                             add.setChatId(message.getChatId().toString());
@@ -72,7 +73,7 @@ public class Bot extends TelegramLongPollingBot
                         }
                         break;
                     case "/stop":
-                        chatids.remove(message.getChatId());
+                        clients.remove(removeClient(message.getChatId().toString()));
                         SendMessage remove = new SendMessage();
                         remove.setChatId(message.getChatId().toString());
                         remove.setText("This was my last message. Have a nice day!");
@@ -102,7 +103,12 @@ public class Bot extends TelegramLongPollingBot
         SendMessage message = new SendMessage();
         message.setText("Service " + s.toString() + " is down!");
         Logging.log("Service " + s.toString() + " is down!");
-        chatids.stream().map((id) -> 
+        for(Client c : clients)
+        {
+            message.setChatId(c.getClientid());
+        }
+        
+        clients.stream().map((id) -> 
                 {
                     message.setChatId(id.toString());
                     return id;
@@ -128,6 +134,18 @@ public class Bot extends TelegramLongPollingBot
         {
             Logger.getLogger(Bot.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private Client removeClient(String id)
+    {
+        for(Client c : clients)
+        {
+            if(c.getClientid().equals(id))
+            {
+                return c;
+            }
+        }
+        return null;                
     }
 
 }

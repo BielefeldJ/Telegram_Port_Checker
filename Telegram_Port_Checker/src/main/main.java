@@ -18,7 +18,7 @@ public class main
 
         try
         {
-            Checker.getServices(test);
+            Checker.addServices(test);
         }
         catch(NumberFormatException ex)
         {
