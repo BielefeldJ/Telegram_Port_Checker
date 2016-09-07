@@ -3,10 +3,7 @@ package main.check;
 import java.util.List;
 
 import main.Service;
-import org.telegram.telegrambots.TelegramApiException;
-import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.logging.BotLogger;
-import telegram.Bot;
+
 
 /**
  *
@@ -16,29 +13,20 @@ public class Check_services implements Runnable
 {
 
     private final List<Service> services;
-    private final TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
-    private final Bot bot = new Bot();
+    private final String clid;
+
 
     
 
-    public Check_services(List services)
+    public Check_services(List services, String clid)
     {
         this.services = services;
+        this.clid = clid;
     }
 
     @Override
     public void run()
     {
-        try
-        {
-            telegramBotsApi.registerBot(bot);
-        }
-        catch (TelegramApiException e)
-        {
-            BotLogger.error("Error register", e);
-            System.out.println("Check BotConfig file!");
-        }
-
         while (!Thread.currentThread().isInterrupted())
         {
             services.stream().forEach((s) ->
@@ -47,7 +35,7 @@ public class Check_services implements Runnable
                 {
                     if(!s.isMessage_sended())
                     {
-                        bot.fireOfflineMessage(s);
+                        main.main.bot.fireOfflineMessage(s, clid);
                         s.toggleMessageSended();
                     }                    
                 }

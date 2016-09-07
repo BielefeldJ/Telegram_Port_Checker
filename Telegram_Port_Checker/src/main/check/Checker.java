@@ -11,16 +11,16 @@ import main.Service;
 public class Checker
 {
 
-    private final static List<Service> services = new LinkedList<>();
-    private static Thread checking;
+    private final List<Service> services = new LinkedList<>();
+    private Thread checking;
 
-    public static void startCheck()
+    public void startCheck(String clid)
     {
-        checking = new Thread(new Check_services(services));
+        checking = new Thread(new Check_services(services,clid));
         checking.start();
     }
 
-    public static void stopCheck() throws InterruptedException
+    public void stopCheck() throws InterruptedException
     {
         if (!checking.isInterrupted())
         {
@@ -29,21 +29,13 @@ public class Checker
         }
     }
 
-    public static void addServices(String[] data) throws NumberFormatException
-    {
-        for (String s : data)
-        {
-            services.add(new Service(s.substring(0, s.indexOf(":")), getPortFromString(s)));
-        }
-    }
-
-    public static void addServices(String s) throws NumberFormatException
+    public void addServices(String s) throws NumberFormatException
     {
         services.add(new Service(s.substring(0, s.indexOf(":")), getPortFromString(s)));
 
     }
 
-    public static void printServices()
+    public void printServices()
     {
         services.stream().forEach(System.out::println);
     }

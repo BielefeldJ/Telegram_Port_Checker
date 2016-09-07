@@ -57,7 +57,7 @@ public class Bot extends TelegramLongPollingBot
                     case "/add":
                         try
                         {
-                            Checker.addServices(msg.substring(msg.indexOf(" ") + 1));
+                            findClient(message.getChatId().toString()).addService(msg.substring(msg.indexOf(" ") + 1));
                             Logging.log("New Service added by " + message.getChatId().toString() + (msg.indexOf(" ") + 1));
                             SendMessage add = new SendMessage();
                             add.setChatId(message.getChatId().toString());
@@ -73,7 +73,7 @@ public class Bot extends TelegramLongPollingBot
                         }
                         break;
                     case "/stop":
-                        clients.remove(removeClient(message.getChatId().toString()));
+                        clients.remove(findClient(message.getChatId().toString()));
                         SendMessage remove = new SendMessage();
                         remove.setChatId(message.getChatId().toString());
                         remove.setText("This was my last message. Have a nice day!");
@@ -98,24 +98,13 @@ public class Bot extends TelegramLongPollingBot
         }
     }
 
-    public void fireOfflineMessage(Service s)
+    public void fireOfflineMessage(Service s, String clid)
     {
         SendMessage message = new SendMessage();
         message.setText("Service " + s.toString() + " is down!");
         Logging.log("Service " + s.toString() + " is down!");
-        for(Client c : clients)
-        {
-            message.setChatId(c.getClientid());
-        }
-        
-        clients.stream().map((id) -> 
-                {
-                    message.setChatId(id.toString());
-                    return id;
-        }).forEach((_item) -> 
-                {
-                    sendTelegramMessage(message);                                        
-        });
+        message.setChatId(clid);
+        sendTelegramMessage(message);
     }
 
     @Override
@@ -136,7 +125,7 @@ public class Bot extends TelegramLongPollingBot
         }
     }
     
-    private Client removeClient(String id)
+    private Client findClient(String id)
     {
         for(Client c : clients)
         {
