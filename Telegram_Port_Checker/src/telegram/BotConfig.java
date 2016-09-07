@@ -1,4 +1,3 @@
-
 package telegram;
 
 public class BotConfig 
