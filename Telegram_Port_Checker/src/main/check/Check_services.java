@@ -1,6 +1,7 @@
 package main.check;
 
 import java.util.List;
+
 import main.Service;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.TelegramBotsApi;
@@ -16,7 +17,9 @@ public class Check_services implements Runnable
 
     private final List<Service> services;
     private final TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
-    private final Bot bot =new Bot();
+    private final Bot bot = new Bot();
+
+    
 
     public Check_services(List services)
     {
@@ -33,6 +36,7 @@ public class Check_services implements Runnable
         catch (TelegramApiException e)
         {
             BotLogger.error("Error register", e);
+            System.out.println("Check BotConfig file!");
         }
 
         while (!Thread.currentThread().isInterrupted())
@@ -57,7 +61,6 @@ public class Check_services implements Runnable
             });
             try
             {
-                System.out.println("Waiting..");
                 Thread.sleep(10000);
             }
             catch (InterruptedException ex)

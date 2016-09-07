@@ -2,15 +2,16 @@ package main;
 
 import main.check.Checker;
 import java.util.Scanner;
+import logging.Logging;
 
 public class main
 {
 
     public static void main(String[] args)
     {
+        new Logging(); // initializiere logger
         boolean exit = false;
-        Scanner sc = null;        
-
+        Scanner sc = null;    
         String[] test = new String[2];
         test[0] = "ts3.bielefeld-server.de:9399";
         test[1] = "ts3.bielefeld-server.de:30033";
