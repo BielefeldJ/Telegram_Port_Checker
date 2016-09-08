@@ -1,7 +1,5 @@
 package main;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import logging.Logging;
 import main.check.Checker;
 
