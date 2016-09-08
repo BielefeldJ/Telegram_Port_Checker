@@ -1,11 +1,9 @@
 package telegram;
 
+import data.Backup;
 import exceptions.NoServicesException;
 import exceptions.ServiceNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import logging.Logging;
 import main.Client;
 import main.Service;
@@ -18,7 +16,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 public class Bot extends TelegramLongPollingBot
 {
 
-    private final List<Client> clients = new ArrayList<Client>();
+    private ArrayList<Client> clients = new ArrayList<>();
     private String command;
 
     @Override
@@ -34,7 +32,6 @@ public class Bot extends TelegramLongPollingBot
         {
             Message message = update.getMessage();
             String chatid = message.getChatId().toString();
-            String username = message.getFrom().getUserName();
             if (message.hasText())
             {
                 String msg = message.getText();
@@ -49,13 +46,13 @@ public class Bot extends TelegramLongPollingBot
                 switch (command)
                 {
                     case "/start":
-                        clients.add(new Client(chatid, username));
+                        clients.add(new Client(chatid));
                         findClient(chatid).start();
                         SendMessage newclient = new SendMessage();
                         newclient.setChatId(chatid);
                         newclient.setText("You will now receive offline messages! Check /help!");
                         sendTelegramMessage(newclient);
-                        Logging.log("New client: ID: " + chatid + " name:" + username);
+                        Logging.log("New client: ID: " + chatid );
 
                         break;
                     case "/add":
@@ -84,7 +81,7 @@ public class Bot extends TelegramLongPollingBot
                         }
                         catch (NullPointerException e)
                         {
-                            Logging.log(chatid + " " + username + " cant add Service.");
+                            Logging.log(chatid + " cant add Service.");
                         }
                         break;
                     case "/del":
@@ -113,7 +110,7 @@ public class Bot extends TelegramLongPollingBot
                         }
                         catch (NullPointerException e)
                         {
-                            Logging.log(chatid + " " + username + " cant add Service.");
+                            Logging.log(chatid + "cant add Service.");
                         }
                         catch (NoServicesException ex)
                         {
@@ -137,7 +134,7 @@ public class Bot extends TelegramLongPollingBot
                         SendMessage remove = new SendMessage();
                         remove.setChatId(chatid);
                         remove.setText("This was my last message. Have a nice day!");
-                        Logging.log("Removed Client " + chatid + " name: " + username);
+                        Logging.log("Removed Client " + chatid);
                         sendTelegramMessage(remove);
                         break;
                     case "/help":
@@ -197,7 +194,7 @@ public class Bot extends TelegramLongPollingBot
         }
         catch (TelegramApiException ex)
         {
-            Logger.getLogger(Bot.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Send Message failed...");
         }
     }
 
@@ -211,6 +208,16 @@ public class Bot extends TelegramLongPollingBot
             }
         }
         return null;
+    }
+    
+    public void save()
+    {
+        Backup.save(clients);
+    }
+    
+    public void load()
+    {
+        this.clients = Backup.load();
     }
 
 }

@@ -19,6 +19,7 @@ public class main
         new Logging(); // initializiere logger
         boolean exit = false;
         Scanner sc = null;
+        bot.load();
         try
         {
             telegramBotsApi.registerBot(bot);
@@ -40,6 +41,7 @@ public class main
         }
 
         sc.close();
+        bot.save();
         System.exit(0);
     }
 

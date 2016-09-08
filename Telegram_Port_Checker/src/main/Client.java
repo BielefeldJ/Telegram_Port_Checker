@@ -8,17 +8,11 @@ import main.check.Checker;
 public class Client
 {
     private String clientid;
-    private final String username;
 
-    public String getUsername()
-    {
-        return username;
-    }
     private final Checker check = new Checker();
     
-    public Client(String clientid, String username)
+    public Client(String clientid)
     {
-        this.username = username;
         this.clientid = clientid;
     }
 
