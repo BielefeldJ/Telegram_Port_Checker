@@ -44,7 +44,7 @@ public class Client
         }
         catch (InterruptedException ex)
         {
-            Logging.log("Error stop command clid: " + clientid + username);
+            Logging.log("Error stop command clid: " + clientid);
             System.out.println("Error stop command clid: " + clientid);
         }
     }
