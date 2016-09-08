@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import logging.Logging;
 import main.Client;
 import main.Service;
-import main.check.Checker;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
@@ -47,6 +46,7 @@ public class Bot extends TelegramLongPollingBot
                 {
                     case "/start":
                         clients.add(new Client(message.getChatId().toString()));
+                        findClient(message.getChatId().toString()).start();
                         SendMessage newclient = new SendMessage();
                         newclient.setChatId(message.getChatId().toString());
                         newclient.setText("You will now receive offline messages!");
@@ -61,7 +61,7 @@ public class Bot extends TelegramLongPollingBot
                             Logging.log("New Service added by " + message.getChatId().toString() + (msg.indexOf(" ") + 1));
                             SendMessage add = new SendMessage();
                             add.setChatId(message.getChatId().toString());
-                            add.setText("Add new service "+ msg.substring(msg.indexOf(" ") + 1));
+                            add.setText("Add new service " + msg.substring(msg.indexOf(" ") + 1));
                             sendTelegramMessage(add);
                         }
                         catch (NumberFormatException e)
@@ -71,9 +71,18 @@ public class Bot extends TelegramLongPollingBot
                             err.setText("Wrong Port.... try again");
                             sendTelegramMessage(err);
                         }
+                        catch (StringIndexOutOfBoundsException e)
+                        {
+                            SendMessage err = new SendMessage();
+                            err.setChatId(message.getChatId().toString());
+                            err.setText("So service found.. check /help!");
+                            sendTelegramMessage(err);
+                        }
                         break;
                     case "/stop":
-                        clients.remove(findClient(message.getChatId().toString()));
+                        Client c = findClient(message.getChatId().toString());
+                        clients.remove(c);
+                        c.stop();
                         SendMessage remove = new SendMessage();
                         remove.setChatId(message.getChatId().toString());
                         remove.setText("This was my last message. Have a nice day!");
@@ -124,17 +133,17 @@ public class Bot extends TelegramLongPollingBot
             Logger.getLogger(Bot.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private Client findClient(String id)
     {
-        for(Client c : clients)
+        for (Client c : clients)
         {
-            if(c.getClientid().equals(id))
+            if (c.getClientid().equals(id))
             {
                 return c;
             }
         }
-        return null;                
+        return null;
     }
 
 }

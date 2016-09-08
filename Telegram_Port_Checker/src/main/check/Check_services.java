@@ -50,6 +50,7 @@ public class Check_services implements Runnable
             try
             {
                 Thread.sleep(10000);
+                System.out.println("Checked service from" + clid);
             }
             catch (InterruptedException ex)
             {

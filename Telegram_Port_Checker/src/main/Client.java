@@ -1,5 +1,8 @@
 package main;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import logging.Logging;
 import main.check.Checker;
 
 public class Client
@@ -31,6 +34,18 @@ public class Client
     public void start()
     {
         check.startCheck(clientid);
+    }
+    public void stop()
+    {
+        try
+        {
+            check.stopCheck();
+        }
+        catch (InterruptedException ex)
+        {
+            Logging.log("Error stop command clid: " + clientid);
+            System.out.println("Error stop command clid: " + clientid);
+        }
     }
     
 }

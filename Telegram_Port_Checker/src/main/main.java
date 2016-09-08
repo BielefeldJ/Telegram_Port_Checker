@@ -40,7 +40,7 @@ public class main
         }
 
         sc.close();
-
+        System.exit(0);
     }
 
 }
