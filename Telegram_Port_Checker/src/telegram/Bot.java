@@ -75,7 +75,7 @@ public class Bot extends TelegramLongPollingBot
                         {
                             SendMessage err = new SendMessage();
                             err.setChatId(message.getChatId().toString());
-                            err.setText("So service found.. check /help!");
+                            err.setText("No service found.. check /help!");
                             sendTelegramMessage(err);
                         }
                         break;
