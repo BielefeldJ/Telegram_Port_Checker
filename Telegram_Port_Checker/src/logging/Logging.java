@@ -31,12 +31,10 @@ public class Logging
             fw = new FileWriter(f);
             bf = new BufferedWriter(fw);
             bf.write("Telegram_Port_Checker started.... \n");
-            bf.flush();
         }
         catch (FileNotFoundException ex)
         {
             System.out.println("File not found");
-            ex.printStackTrace();
         }
         catch (IOException ex)
         {
@@ -49,7 +47,6 @@ public class Logging
         try
         {
             bf.write(message + "\n");
-            bf.flush();
         }
         catch (IOException ex)
         {

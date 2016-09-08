@@ -1,31 +1,34 @@
 package main;
 
-import main.check.Checker;
+
 import java.util.Scanner;
 import logging.Logging;
+import org.telegram.telegrambots.TelegramApiException;
+import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.logging.BotLogger;
+import telegram.Bot;
 
 public class main
 {
+
+    private static final TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+    public static final Bot bot = new Bot();
 
     public static void main(String[] args)
     {
         new Logging(); // initializiere logger
         boolean exit = false;
-        Scanner sc = null;    
-        String[] test = new String[2];
-        test[0] = "ts3.bielefeld-server.de:9399";
-        test[1] = "ts3.bielefeld-server.de:30033";
-
+        Scanner sc = null;
         try
         {
-            Checker.addServices(test);
+            telegramBotsApi.registerBot(bot);
         }
-        catch(NumberFormatException ex)
+        catch (TelegramApiException e)
         {
-            System.out.println("Wrong port");
+            BotLogger.error("Error register", e);
+            System.out.println("Check BotConfig file!");
         }
-        Checker.printServices();
-        Checker.startCheck();
+
         while (!exit)
         {
             System.out.println("Running.. type q to quit!");
@@ -35,18 +38,9 @@ public class main
                 exit = true;
             }
         }
-        
-        sc.close();
-        try
-        {
-            Checker.stopCheck();
-        }
-        catch (InterruptedException ex)
-        {
-            System.out.println("Error join @ main.class");
-        }
-        System.exit(0);
 
+        sc.close();
+        System.exit(0);
     }
 
 }
