@@ -1,5 +1,7 @@
 package telegram;
 
+import exceptions.NoServicesException;
+import exceptions.ServiceNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,6 +33,8 @@ public class Bot extends TelegramLongPollingBot
         if (update.hasMessage())
         {
             Message message = update.getMessage();
+            String chatid = message.getChatId().toString();
+            String username = message.getFrom().getUserName();
             if (message.hasText())
             {
                 String msg = message.getText();
@@ -45,59 +49,122 @@ public class Bot extends TelegramLongPollingBot
                 switch (command)
                 {
                     case "/start":
-                        clients.add(new Client(message.getChatId().toString()));
-                        findClient(message.getChatId().toString()).start();
+                        clients.add(new Client(chatid, username));
+                        findClient(chatid).start();
                         SendMessage newclient = new SendMessage();
-                        newclient.setChatId(message.getChatId().toString());
-                        newclient.setText("You will now receive offline messages!");
+                        newclient.setChatId(chatid);
+                        newclient.setText("You will now receive offline messages! Check /help!");
                         sendTelegramMessage(newclient);
-                        Logging.log("New client: " + message.getChatId().toString());
+                        Logging.log("New client: ID: " + chatid + " name:" + username);
 
                         break;
                     case "/add":
                         try
                         {
-                            findClient(message.getChatId().toString()).addService(msg.substring(msg.indexOf(" ") + 1));
-                            Logging.log("New Service added by " + message.getChatId().toString() + (msg.indexOf(" ") + 1));
+                            findClient(chatid).addService(msg.substring(msg.indexOf(" ") + 1));
+                            Logging.log("New Service added by " + chatid + (msg.indexOf(" ") + 1));
                             SendMessage add = new SendMessage();
-                            add.setChatId(message.getChatId().toString());
+                            add.setChatId(chatid);
                             add.setText("Add new service " + msg.substring(msg.indexOf(" ") + 1));
                             sendTelegramMessage(add);
                         }
                         catch (NumberFormatException e)
                         {
                             SendMessage err = new SendMessage();
-                            err.setChatId(message.getChatId().toString());
+                            err.setChatId(chatid);
                             err.setText("Wrong Port.... try again");
                             sendTelegramMessage(err);
                         }
                         catch (StringIndexOutOfBoundsException e)
                         {
                             SendMessage err = new SendMessage();
-                            err.setChatId(message.getChatId().toString());
+                            err.setChatId(chatid);
                             err.setText("No service found.. check /help!");
+                            sendTelegramMessage(err);
+                        }
+                        catch (NullPointerException e)
+                        {
+                            Logging.log(chatid + " " + username + " cant add Service.");
+                        }
+                        break;
+                    case "/del":
+                        try
+                        {
+                            findClient(chatid).delService(msg.substring(msg.indexOf(" ") + 1));
+                            Logging.log("Service removed by " + chatid + (msg.indexOf(" ") + 1));
+                            SendMessage add = new SendMessage();
+                            add.setChatId(chatid);
+                            add.setText("Removed service " + msg.substring(msg.indexOf(" ") + 1));
+                            sendTelegramMessage(add);
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            SendMessage err = new SendMessage();
+                            err.setChatId(chatid);
+                            err.setText("Wrong Port.... try again");
+                            sendTelegramMessage(err);
+                        }
+                        catch (StringIndexOutOfBoundsException e)
+                        {
+                            SendMessage err = new SendMessage();
+                            err.setChatId(chatid);
+                            err.setText("No service found.. check /help!");
+                            sendTelegramMessage(err);
+                        }
+                        catch (NullPointerException e)
+                        {
+                            Logging.log(chatid + " " + username + " cant add Service.");
+                        }
+                        catch (NoServicesException ex)
+                        {
+                            SendMessage err = new SendMessage();
+                            err.setChatId(chatid);
+                            err.setText("You dont have any services.");
+                            sendTelegramMessage(err);
+                        }
+                        catch (ServiceNotFoundException ex)
+                        {
+                            SendMessage err = new SendMessage();
+                            err.setChatId(chatid);
+                            err.setText("Service not found.");
                             sendTelegramMessage(err);
                         }
                         break;
                     case "/stop":
-                        Client c = findClient(message.getChatId().toString());
+                        Client c = findClient(chatid);
                         clients.remove(c);
                         c.stop();
                         SendMessage remove = new SendMessage();
-                        remove.setChatId(message.getChatId().toString());
+                        remove.setChatId(chatid);
                         remove.setText("This was my last message. Have a nice day!");
-                        Logging.log("Removed Client " + message.getChatId().toString());
+                        Logging.log("Removed Client " + chatid + " name: " + username);
                         sendTelegramMessage(remove);
                         break;
                     case "/help":
                         SendMessage help = new SendMessage();
-                        help.setChatId(message.getChatId().toString());
-                        help.setText("List of available commands: \n\n /start: The bot stard inform you about offline services \n /stop The bot stop inform you about offline services \n /add <service>: You can add a service. Example: /add 127.0.0.1:80 \n /help: displays this message. \n ");
+                        help.setChatId(chatid);
+                        help.setText("List of available commands: \n\n /start: The bot stard inform you about offline services \n /stop: The bot stop inform you about offline services \n /add <service>: You can add a service. Example: /add 127.0.0.1:80 \n /help: displays this message. \n ");
                         sendTelegramMessage(help);
+                        break;
+                    case "/list":
+                        try
+                        {
+                            SendMessage list = new SendMessage();
+                            list.setChatId(chatid);
+                            list.setText(findClient(chatid).listServices());
+                            sendTelegramMessage(list);
+                        }
+                        catch (NoServicesException e)
+                        {
+                            SendMessage err = new SendMessage();
+                            err.setChatId(chatid);
+                            err.setText("You dont have any services.");
+                            sendTelegramMessage(err);
+                        }
                         break;
                     default:
                         SendMessage unknown = new SendMessage();
-                        unknown.setChatId(message.getChatId().toString());
+                        unknown.setChatId(chatid);
                         unknown.setText("Unknown commend. Use /help for a list of commands");
                         sendTelegramMessage(unknown);
                         break;

@@ -3,6 +3,8 @@ package main.check;
 import java.util.LinkedList;
 import java.util.List;
 import main.Service;
+import exceptions.NoServicesException;
+import exceptions.ServiceNotFoundException;
 
 /**
  *
@@ -16,7 +18,7 @@ public class Checker
 
     public void startCheck(String clid)
     {
-        checking = new Thread(new Check_services(services,clid));
+        checking = new Thread(new Check_services(services, clid));
         checking.start();
     }
 
@@ -35,9 +37,18 @@ public class Checker
 
     }
 
-    public void printServices()
+    public String printServices() throws NoServicesException
     {
-        services.stream().forEach(System.out::println);
+        if (services.isEmpty())
+        {
+            throw new NoServicesException("services empty");
+        }
+        else
+        {
+            String list = "";
+            list = services.stream().map((s) -> s.toString() + "\n").reduce(list, String::concat);
+            return list;
+        }
     }
 
     private static int getPortFromString(String s) throws NumberFormatException
@@ -45,6 +56,33 @@ public class Checker
         int port = 0;
         port = Integer.parseInt(s.substring(s.indexOf(":") + 1, s.length()));
         return port;
+    }
+
+    public void delServices(String service) throws NoServicesException, ServiceNotFoundException
+    {
+        if (!services.isEmpty())
+        {
+            if(!services.remove(findService(service)))
+            {
+                throw new ServiceNotFoundException("Service not found");
+            }
+        }
+        else
+        {
+            throw new NoServicesException("services empty");
+        }
+    }
+
+    private Service findService(String service)
+    {
+        for (Service s : services)
+        {
+            if (s.toString().equals(service))
+            {
+                return s;
+            }
+        }
+        return null;
     }
 
 }

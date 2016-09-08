@@ -1,15 +1,24 @@
 package main;
 
+import exceptions.NoServicesException;
+import exceptions.ServiceNotFoundException;
 import logging.Logging;
 import main.check.Checker;
 
 public class Client
 {
     private String clientid;
-    private Checker check = new Checker();
-    
-    public Client(String clientid)
+    private final String username;
+
+    public String getUsername()
     {
+        return username;
+    }
+    private final Checker check = new Checker();
+    
+    public Client(String clientid, String username)
+    {
+        this.username = username;
         this.clientid = clientid;
     }
 
@@ -41,9 +50,18 @@ public class Client
         }
         catch (InterruptedException ex)
         {
-            Logging.log("Error stop command clid: " + clientid);
+            Logging.log("Error stop command clid: " + clientid + username);
             System.out.println("Error stop command clid: " + clientid);
         }
+    }
+    public String listServices() throws NoServicesException
+    {
+        return check.printServices();
+    }
+
+    public void delService(String serivce) throws NoServicesException, ServiceNotFoundException
+    {
+        check.delServices(serivce);
     }
     
 }
