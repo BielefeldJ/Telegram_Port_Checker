@@ -1,10 +1,11 @@
 
 package main;
 
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class Service
+public class Service implements Serializable
 {
 
     private final int port;

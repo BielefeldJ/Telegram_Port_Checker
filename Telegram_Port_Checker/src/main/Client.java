@@ -2,10 +2,11 @@ package main;
 
 import exceptions.NoServicesException;
 import exceptions.ServiceNotFoundException;
+import java.io.Serializable;
 import logging.Logging;
 import main.check.Checker;
 
-public class Client
+public class Client implements Serializable
 {
     private String clientid;
 
