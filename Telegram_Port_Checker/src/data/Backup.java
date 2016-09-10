@@ -41,7 +41,7 @@ public class Backup
     
     public static ArrayList<Client> load()
     {
-        ArrayList<Client> list = null;
+        ArrayList<Client> list = new ArrayList<>();
         try(FileInputStream fis = new FileInputStream(f);ObjectInputStream ois = new ObjectInputStream(fis))
         {
             list = (ArrayList<Client>)ois.readObject();

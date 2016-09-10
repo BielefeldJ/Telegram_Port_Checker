@@ -14,7 +14,7 @@ public class Checker
 {
 
     private final List<Service> services = new LinkedList<>();
-    private Thread checking;
+    private transient Thread checking;
 
     public void startCheck(String clid)
     {
