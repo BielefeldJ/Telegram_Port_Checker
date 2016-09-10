@@ -1,7 +1,0 @@
-start - Enable the bot.
-add - Add a service "/add <ip:port>".
-remove - Remove a service "/remoce <ip:port>".
-list - Receve a list of your services.
-help - Show this message.
-info - Info about this bot.
-stop - Disable the bot.

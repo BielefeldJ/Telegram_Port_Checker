@@ -1,6 +1,5 @@
 package main.check;
 
-import java.io.Serializable;
 import java.util.List;
 
 import main.Service;
@@ -10,7 +9,7 @@ import main.Service;
  *
  * @author Admin
  */
-public class Check_services implements Runnable, Serializable
+public class Check_services implements Runnable
 {
 
     private final List<Service> services;
@@ -36,7 +35,7 @@ public class Check_services implements Runnable, Serializable
                 {
                     if(!s.isMessage_sended())
                     {
-                        main.main.TBOT.fireOfflineMessage(s, clid);
+                        main.main.bot.fireOfflineMessage(s, clid);
                         s.toggleMessageSended();
                     }                    
                 }
@@ -44,7 +43,6 @@ public class Check_services implements Runnable, Serializable
                 {
                     if(s.isMessage_sended())
                     {
-                        main.main.TBOT.fireOnlineMessage(s, clid);
                         s.toggleMessageSended();
                     }
                 }

@@ -21,7 +21,7 @@ import main.Client;
  */
 public class Backup
 {
-    private static final File f = new File("saveddata.dat");
+    private static File f = new File("saveddata.dat");
     
     public static void save(ArrayList<Client> list)
     {
@@ -36,13 +36,12 @@ public class Backup
         catch (IOException ex)
         {
             System.out.println("IO Err @ Save backup.class");
-            ex.printStackTrace();
         }
     }
     
     public static ArrayList<Client> load()
     {
-        ArrayList<Client> list =  new ArrayList<>();
+        ArrayList<Client> list = null;
         try(FileInputStream fis = new FileInputStream(f);ObjectInputStream ois = new ObjectInputStream(fis))
         {
             list = (ArrayList<Client>)ois.readObject();
@@ -50,7 +49,6 @@ public class Backup
         catch (IOException ex)
         {
             System.out.println("IO Err @ load backup.class");
-            ex.printStackTrace();
         }
         catch (ClassNotFoundException ex)
         {

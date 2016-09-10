@@ -5,13 +5,12 @@ import java.util.List;
 import main.Service;
 import exceptions.NoServicesException;
 import exceptions.ServiceNotFoundException;
-import java.io.Serializable;
 
 /**
  *
  * @author Admin
  */
-public class Checker implements Serializable
+public class Checker
 {
 
     private final List<Service> services = new LinkedList<>();

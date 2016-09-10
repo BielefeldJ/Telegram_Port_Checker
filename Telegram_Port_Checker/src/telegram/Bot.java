@@ -3,7 +3,6 @@ package telegram;
 import data.Backup;
 import exceptions.NoServicesException;
 import exceptions.ServiceNotFoundException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import logging.Logging;
 import main.Client;
@@ -14,7 +13,7 @@ import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
-public class Bot extends TelegramLongPollingBot implements Serializable
+public class Bot extends TelegramLongPollingBot
 {
 
     private ArrayList<Client> clients = new ArrayList<>();
@@ -53,7 +52,7 @@ public class Bot extends TelegramLongPollingBot implements Serializable
                         newclient.setChatId(chatid);
                         newclient.setText("You will now receive offline messages! Check /help!");
                         sendTelegramMessage(newclient);
-                        Logging.log("New client: ID: " + chatid);
+                        Logging.log("New client: ID: " + chatid );
 
                         break;
                     case "/add":
@@ -160,16 +159,6 @@ public class Bot extends TelegramLongPollingBot implements Serializable
                             sendTelegramMessage(err);
                         }
                         break;
-                    case "/info":
-                        SendMessage info = new SendMessage();
-                        info.setChatId(chatid);
-                        info.setText("This bot will notify you whenever a service fails. \n If you have a question or you found a bug, let me know! Use /report <message>. \n Don't forget your email!");
-                        sendTelegramMessage(info);
-                        break;
-                    case "/report":
-                        SendMessage report = new SendMessage();
-                        report.setChatId("152158380");
-                        report.setText("Report: " + msg.substring(msg.indexOf(" ") + 1));
                     default:
                         SendMessage unknown = new SendMessage();
                         unknown.setChatId(chatid);
@@ -187,15 +176,6 @@ public class Bot extends TelegramLongPollingBot implements Serializable
         SendMessage message = new SendMessage();
         message.setText("Service " + s.toString() + " is down!");
         Logging.log("Service " + s.toString() + " is down!");
-        message.setChatId(clid);
-        sendTelegramMessage(message);
-    }
-
-    public void fireOnlineMessage(Service s, String clid)
-    {
-        SendMessage message = new SendMessage();
-        message.setText("Service " + s.toString() + " is on!");
-        Logging.log("Service " + s.toString() + " is on!");
         message.setChatId(clid);
         sendTelegramMessage(message);
     }
@@ -229,31 +209,12 @@ public class Bot extends TelegramLongPollingBot implements Serializable
         }
         return null;
     }
-
-    public void sendAll(String text)
-    {
-        if (!clients.isEmpty())
-        {
-            SendMessage msg = new SendMessage();
-            msg.setText(text);
-            clients.stream().map((c)
-                    -> 
-                    {
-                        msg.setChatId(c.getClientid());
-                        return c;
-            }).forEach((_item)
-                    -> 
-                    {
-                        sendTelegramMessage(msg);
-            });
-        }
-    }
-
+    
     public void save()
     {
         Backup.save(clients);
     }
-
+    
     public void load()
     {
         this.clients = Backup.load();
