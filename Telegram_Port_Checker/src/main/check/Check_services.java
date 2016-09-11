@@ -5,11 +5,6 @@ import java.util.List;
 
 import main.Service;
 
-
-/**
- *
- * @author Admin
- */
 public class Check_services implements Runnable, Serializable
 {
 
@@ -34,25 +29,24 @@ public class Check_services implements Runnable, Serializable
             {
                 if (!s.portIsOpen())
                 {
-                    if(!s.isMessage_sended())
+                    if(!s.isOffline())
                     {
                         main.main.TBOT.fireOfflineMessage(s, clid);
-                        s.toggleMessageSended();
+                        s.toggleOnlineStatus();
                     }                    
                 }
                 else
                 {
-                    if(s.isMessage_sended())
+                    if(s.isOffline())
                     {
                         main.main.TBOT.fireOnlineMessage(s, clid);
-                        s.toggleMessageSended();
+                        s.toggleOnlineStatus();
                     }
                 }
             });
             try
             {
                 Thread.sleep(10000);
-             //   System.out.println("Checked service from " + clid);
             }
             catch (InterruptedException ex)
             {

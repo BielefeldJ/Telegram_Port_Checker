@@ -168,6 +168,22 @@ public class Bot extends TelegramLongPollingBot implements Serializable
                             sendTelegramMessage(err);
                         }
                         break;
+                    case "/status":
+                        try
+                        {
+                            SendMessage status = new SendMessage();
+                            status.setChatId(chatid);
+                            status.setText(findClient(chatid).listStatus());
+                            sendTelegramMessage(status);
+                        }
+                        catch (NoServicesException ex)
+                        {
+                            SendMessage err = new SendMessage();
+                            err.setChatId(chatid);
+                            err.setText("You dont have any services.");
+                            sendTelegramMessage(err);
+                        }
+                        break;
                     case "/info":
                         SendMessage info = new SendMessage();
                         info.setChatId(chatid);
@@ -184,9 +200,14 @@ public class Bot extends TelegramLongPollingBot implements Serializable
                         try
                         {
                             checkForContent(content);
-                            if (content.equals(BotConfig.getBOT_PASSWORD()))
+                            if (BotConfig.check_PASSWORD(content))
                             {
                                 BotConfig.BOT_ADMIN = chatid;
+                                Logging.log(username + " - "+chatid + " Logged in!" );
+                            }
+                            else
+                            {
+                                Logging.log(username + " - "+chatid + " tryed to log in!" );
                             }
                         }
                         catch (NoContentException ex)

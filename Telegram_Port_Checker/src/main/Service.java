@@ -10,11 +10,11 @@ public class Service implements Serializable
 
     private final int port;
     private final String ip;
-    private boolean message_sended=false;
+    private boolean offline=false;
 
-    public boolean isMessage_sended()
+    public boolean isOffline()
     {
-        return message_sended;
+        return offline;
     }
 
     public Service(String ip, int port)
@@ -45,15 +45,15 @@ public class Service implements Serializable
         }
     }
     
-    public void toggleMessageSended()
+    public void toggleOnlineStatus()
     {
-        if(message_sended == true)
+        if(offline == true)
         {
-            message_sended = false;
+            offline = false;
         }
         else
         {
-            message_sended=true;
+            offline=true;
         }
     }
 }

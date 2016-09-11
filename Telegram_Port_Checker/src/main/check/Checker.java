@@ -1,16 +1,11 @@
 package main.check;
 
-
 import main.Service;
 import exceptions.NoServicesException;
 import exceptions.ServiceNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- *
- * @author Admin
- */
 public class Checker implements Serializable
 {
 
@@ -54,7 +49,7 @@ public class Checker implements Serializable
 
     private static int getPortFromString(String s) throws NumberFormatException
     {
-        int port = 0;
+        int port;
         port = Integer.parseInt(s.substring(s.indexOf(":") + 1, s.length()));
         return port;
     }
@@ -63,7 +58,7 @@ public class Checker implements Serializable
     {
         if (!services.isEmpty())
         {
-            if(!services.remove(findService(service)))
+            if (!services.remove(findService(service)))
             {
                 throw new ServiceNotFoundException("Service not found");
             }
@@ -84,6 +79,19 @@ public class Checker implements Serializable
             }
         }
         return null;
+    }
+
+    public String listStatus() throws NoServicesException
+    {
+        String text = "";
+        if (services.isEmpty())
+        {
+            throw new NoServicesException("services empty");
+        }
+        else
+        {
+            return services.stream().map((s) -> s.toString() + " is " + (!s.isOffline() ? "Online! \n " : "Offline!\n")).reduce(text, String::concat);
+        }
     }
 
 }

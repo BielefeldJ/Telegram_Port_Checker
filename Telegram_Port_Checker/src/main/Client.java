@@ -61,4 +61,9 @@ public class Client implements Serializable
         check.delServices(serivce);
     }
     
+    public String listStatus() throws NoServicesException
+    {
+        return check.listStatus();
+    }
+    
 }
