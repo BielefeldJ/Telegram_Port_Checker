@@ -149,7 +149,7 @@ public class Bot extends TelegramLongPollingBot implements Serializable
                     case "/help":
                         SendMessage help = new SendMessage();
                         help.setChatId(chatid);
-                        help.setText("List of available commands: \n\n /start: The bot stard inform you about offline services \n /stop: The bot stop inform you about offline services \n /add <service>: You can add a service. Example: /add 127.0.0.1:80 \n /help: displays this message. \n ");
+                        help.setText("List of available commands: \n\n/start: The bot stard inform you about offline services \n/add <IP:PORT>: You can add a service. Example: /add example.com:80 \n/remove <IP:PORT>: You can remove a service. Example: /remove example.com:80\n/list: Receve a list of all services. \n/status: Resece the status of your services.\n/info - Info about this bot.\n/help: displays this message. \n/stop - The bot stop inform you about offline services. (This command will delete all userdata!) ");
                         sendTelegramMessage(help);
                         break;
                     case "/list":

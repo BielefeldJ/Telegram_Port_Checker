@@ -4,4 +4,8 @@ remove - Remove a service "/remoce <ip:port>".
 list - Receve a list of your services.
 help - Show this message.
 info - Info about this bot.
+status - Get the online/offline status your services
 stop - Disable the bot.
+
+
+
