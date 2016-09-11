@@ -9,12 +9,14 @@ import main.check.Checker;
 public class Client implements Serializable
 {
     private String clientid;
+    private String username;
 
     private final Checker check = new Checker();
     
-    public Client(String clientid)
+    public Client(String clientid, String username)
     {
         this.clientid = clientid;
+        this.username = username;
     }
 
     public String getClientid()

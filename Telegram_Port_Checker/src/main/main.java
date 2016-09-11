@@ -21,6 +21,7 @@ public class main
         {
             TBOT.load();
             TBOT.sendAll("We are back!");
+            TBOT.startAll();
             try
             {
                 TBOTAPI.registerBot(TBOT);

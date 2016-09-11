@@ -1,11 +1,11 @@
 package main.check;
 
-import java.util.LinkedList;
-import java.util.List;
+
 import main.Service;
 import exceptions.NoServicesException;
 import exceptions.ServiceNotFoundException;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  *
@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class Checker implements Serializable
 {
 
-    private final List<Service> services = new LinkedList<>();
+    private final ArrayList<Service> services = new ArrayList<>();
     private transient Thread checking;
 
     public void startCheck(String clid)

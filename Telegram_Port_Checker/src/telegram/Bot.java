@@ -1,10 +1,13 @@
 package telegram;
 
 import data.Backup;
+import exceptions.NoContentException;
 import exceptions.NoServicesException;
 import exceptions.ServiceNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import logging.Logging;
 import main.Client;
 import main.Service;
@@ -18,7 +21,6 @@ public class Bot extends TelegramLongPollingBot implements Serializable
 {
 
     private ArrayList<Client> clients = new ArrayList<>();
-    private String command;
 
     @Override
     public String getBotToken()
@@ -33,12 +35,16 @@ public class Bot extends TelegramLongPollingBot implements Serializable
         {
             Message message = update.getMessage();
             String chatid = message.getChatId().toString();
+            String username = message.getChat().getFirstName();
+            String command;
+            String content = null;
             if (message.hasText())
             {
                 String msg = message.getText();
                 if (msg.contains(" "))
                 {
                     command = msg.substring(0, msg.indexOf(" "));
+                    content = msg.substring(msg.indexOf(" ") + 1);
                 }
                 else
                 {
@@ -47,23 +53,24 @@ public class Bot extends TelegramLongPollingBot implements Serializable
                 switch (command)
                 {
                     case "/start":
-                        clients.add(new Client(chatid));
+                        clients.add(new Client(chatid, username));
                         findClient(chatid).start();
                         SendMessage newclient = new SendMessage();
                         newclient.setChatId(chatid);
                         newclient.setText("You will now receive offline messages! Check /help!");
                         sendTelegramMessage(newclient);
-                        Logging.log("New client: ID: " + chatid);
+                        Logging.log("New client: ID: " + chatid + " " + username);
 
                         break;
                     case "/add":
                         try
                         {
-                            findClient(chatid).addService(msg.substring(msg.indexOf(" ") + 1));
-                            Logging.log("New Service added by " + chatid + (msg.indexOf(" ") + 1));
+                            checkForContent(content);
+                            findClient(chatid).addService(content);
+                            Logging.log("New Service added by " + chatid + " " + content + " " + username);
                             SendMessage add = new SendMessage();
                             add.setChatId(chatid);
-                            add.setText("Add new service " + msg.substring(msg.indexOf(" ") + 1));
+                            add.setText("Add new service " + content);
                             sendTelegramMessage(add);
                         }
                         catch (NumberFormatException e)
@@ -73,7 +80,7 @@ public class Bot extends TelegramLongPollingBot implements Serializable
                             err.setText("Wrong Port.... try again");
                             sendTelegramMessage(err);
                         }
-                        catch (StringIndexOutOfBoundsException e)
+                        catch (NoContentException e)
                         {
                             SendMessage err = new SendMessage();
                             err.setChatId(chatid);
@@ -85,14 +92,15 @@ public class Bot extends TelegramLongPollingBot implements Serializable
                             Logging.log(chatid + " cant add Service.");
                         }
                         break;
-                    case "/del":
+                    case "/remove":
                         try
                         {
-                            findClient(chatid).delService(msg.substring(msg.indexOf(" ") + 1));
-                            Logging.log("Service removed by " + chatid + (msg.indexOf(" ") + 1));
+                            checkForContent(content);
+                            findClient(chatid).delService(content);
+                            Logging.log("Service removed by " + chatid + content + " " + username);
                             SendMessage add = new SendMessage();
                             add.setChatId(chatid);
-                            add.setText("Removed service " + msg.substring(msg.indexOf(" ") + 1));
+                            add.setText("Removed service " + content);
                             sendTelegramMessage(add);
                         }
                         catch (NumberFormatException e)
@@ -102,7 +110,7 @@ public class Bot extends TelegramLongPollingBot implements Serializable
                             err.setText("Wrong Port.... try again");
                             sendTelegramMessage(err);
                         }
-                        catch (StringIndexOutOfBoundsException e)
+                        catch (NoContentException e)
                         {
                             SendMessage err = new SendMessage();
                             err.setChatId(chatid);
@@ -135,7 +143,7 @@ public class Bot extends TelegramLongPollingBot implements Serializable
                         SendMessage remove = new SendMessage();
                         remove.setChatId(chatid);
                         remove.setText("This was my last message. Have a nice day!");
-                        Logging.log("Removed Client " + chatid);
+                        Logging.log("Removed Client " + chatid + " " + username);
                         sendTelegramMessage(remove);
                         break;
                     case "/help":
@@ -168,8 +176,27 @@ public class Bot extends TelegramLongPollingBot implements Serializable
                         break;
                     case "/report":
                         SendMessage report = new SendMessage();
-                        report.setChatId("152158380");
-                        report.setText("Report: " + msg.substring(msg.indexOf(" ") + 1));
+                        report.setChatId(BotConfig.BOT_ADMIN);
+                        report.setText("Report: " + content + " From:" + username);
+                        sendTelegramMessage(report);
+                        break;
+                    case "/login":
+                        try
+                        {
+                            checkForContent(content);
+                            if (content.equals(BotConfig.getBOT_PASSWORD()))
+                            {
+                                BotConfig.BOT_ADMIN = chatid;
+                            }
+                        }
+                        catch (NoContentException ex)
+                        {
+                            SendMessage err = new SendMessage();
+                            err.setChatId(chatid);
+                            err.setText("Nope!");
+                            sendTelegramMessage(err);
+                        }
+                        break;
                     default:
                         SendMessage unknown = new SendMessage();
                         unknown.setChatId(chatid);
@@ -194,8 +221,8 @@ public class Bot extends TelegramLongPollingBot implements Serializable
     public void fireOnlineMessage(Service s, String clid)
     {
         SendMessage message = new SendMessage();
-        message.setText("Service " + s.toString() + " is on!");
-        Logging.log("Service " + s.toString() + " is on!");
+        message.setText("Service " + s.toString() + " is up!");
+        Logging.log("Service " + s.toString() + " is up!");
         message.setChatId(clid);
         sendTelegramMessage(message);
     }
@@ -257,6 +284,23 @@ public class Bot extends TelegramLongPollingBot implements Serializable
     public void load()
     {
         this.clients = Backup.load();
+    }
+
+    public void startAll()
+    {
+        clients.stream().forEach((c)
+                -> 
+                {
+                    c.start();
+        });
+    }
+
+    private static void checkForContent(String content) throws NoContentException
+    {
+        if (content == null)
+        {
+            throw new NoContentException();
+        }
     }
 
 }

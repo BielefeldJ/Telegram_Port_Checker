@@ -28,6 +28,7 @@ public class Backup
         try(FileOutputStream fos = new FileOutputStream(f); ObjectOutputStream oos = new ObjectOutputStream(fos);)
         {
             oos.writeObject(list);
+            System.out.println("Save OK");
         }
         catch (FileNotFoundException ex)
         {
@@ -36,6 +37,7 @@ public class Backup
         catch (IOException ex)
         {
             System.out.println("IO Err @ Save backup.class");
+            ex.printStackTrace();
         }
     }
     
@@ -49,10 +51,12 @@ public class Backup
         catch (IOException ex)
         {
             System.out.println("IO Err @ load backup.class");
+            ex.printStackTrace();
         }
         catch (ClassNotFoundException ex)
         {
             System.out.println("Class not Found!");
+            ex.printStackTrace();
         }
         return list;
     }
