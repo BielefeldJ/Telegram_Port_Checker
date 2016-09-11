@@ -6,8 +6,6 @@ import exceptions.NoServicesException;
 import exceptions.ServiceNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import logging.Logging;
 import main.Client;
 import main.Service;
