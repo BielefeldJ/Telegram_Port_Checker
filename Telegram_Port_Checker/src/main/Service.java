@@ -47,13 +47,6 @@ public class Service implements Serializable
     
     public void toggleOnlineStatus()
     {
-        if(offline == true)
-        {
-            offline = false;
-        }
-        else
-        {
-            offline=true;
-        }
+        offline = !offline;
     }
 }
