@@ -27,7 +27,7 @@ public class Check_services implements Runnable, Serializable
         {
             services.stream().forEach((s) ->
             {
-                if (!s.portIsOpen())
+                if (!s.portIsOpen() && !s.portIsOpen())  //doppelt hält besser
                 {
                     if(!s.isOffline())
                     {
